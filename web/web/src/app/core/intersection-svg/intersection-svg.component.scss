@@ -1,0 +1,56 @@
+.intersection-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.intersection-svg {
+  width: 100%;
+  max-width: 700px;
+  border-radius: 20px;
+  background: #f3f3f3;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.road-label {
+  font-size: 28px;
+  font-weight: 700;
+  fill: #c93232;
+}
+
+.vehicle {
+  fill: #4f8df7;
+  stroke: #1f3b73;
+  stroke-width: 2;
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease,
+    fill 0.3s ease,
+    stroke 0.3s ease;
+}
+
+.vehicle-text {
+  font-size: 14px;
+  font-weight: 700;
+  fill: white;
+  transition: opacity 0.5s ease;
+}
+
+.phase-badge {
+  background: white;
+  border-radius: 12px;
+  padding: 10px 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.leaving-vehicle {
+  fill: #f6b73c;
+  stroke: #d97706;
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.leaving-vehicle-text {
+  opacity: 0;
+}
