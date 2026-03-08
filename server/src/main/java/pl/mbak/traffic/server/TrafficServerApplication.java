@@ -5,8 +5,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class TrafficserverApplication {
+public class TrafficServerApplication {
     public static void main(String[] args) {
-        SpringApplication.run(TrafficserverApplication.class, args);
+        SpringApplication.run(TrafficServerApplication.class, args);
     }
 }
