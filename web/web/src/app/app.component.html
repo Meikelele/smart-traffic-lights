@@ -1,0 +1,79 @@
+<div class="page">
+  <div class="panel left">
+    <h2>Simulation Controls</h2>
+
+    <div class="card">
+      <label for="fileInput">Upload input.json</label>
+      <input id="fileInput" type="file" accept=".json,application/json" (change)="onFileSelected($event)" />
+
+      <button type="button" (click)="loadSample()">Load sample</button>
+
+      <div class="meta" *ngIf="loadedFileName">
+        Loaded file: <strong>{{ loadedFileName }}</strong>
+      </div>
+    </div>
+
+    <div class="card">
+      <button type="button" (click)="startSimulation()" [disabled]="isLoading">
+        {{ isLoading ? 'Running...' : 'Run Simulation' }}
+      </button>
+
+      <button type="button" (click)="startPlayback()" [disabled]="!trace || isPlaying">
+        Start
+      </button>
+
+      <button type="button" (click)="pausePlayback()" [disabled]="!isPlaying">
+        Pause
+      </button>
+
+      <button type="button" (click)="previousStep()" [disabled]="!trace || currentStepIndex === 0">
+        Prev
+      </button>
+
+      <button type="button" (click)="nextStep()" [disabled]="!trace || currentStepIndex >= (trace.steps.length) - 1">
+        Next
+      </button>
+
+      <button type="button" (click)="reset()">Reset</button>
+
+      <input
+        type="range"
+        min="1000"
+        max="4000"
+        step="1000"
+        [(ngModel)]="delaysMs" />
+    </div>
+
+    <div class="card error" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+  </div>
+
+  <div class="panel center">
+    <h2>Intersection</h2>
+
+    <div class="card">
+      <app-intersection-svg [step]="currentStep"></app-intersection-svg>
+    </div>
+  </div>
+
+  <div class="panel right">
+    <h2>Output</h2>
+
+    <div class="card" *ngIf="trace">
+      <p><strong>Step:</strong> {{ currentStepIndex + 1 }} / {{ trace.steps.length }}</p>
+      <p><strong>Command:</strong> {{ currentStep?.command }}</p>
+      <p><strong>Phase:</strong> {{ currentStep?.phase ?? '—' }}</p>
+      <p><strong>Left vehicles:</strong> {{ currentStep?.leftVehicles?.join(', ') || '—' }}</p>
+    </div>
+
+    <div class="card" *ngIf="trace">
+      <h3>Final output</h3>
+      <pre>{{ trace.simulationOutput | json }}</pre>
+    </div>
+
+    <div class="card" *ngIf="!trace">
+      <p>No simulation result yet.</p>
+    </div>
+  </div>
+</div>

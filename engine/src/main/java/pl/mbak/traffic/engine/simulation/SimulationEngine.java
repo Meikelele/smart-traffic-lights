@@ -2,6 +2,7 @@ package pl.mbak.traffic.engine.simulation;
 
 import pl.mbak.traffic.engine.domain.*;
 import pl.mbak.traffic.engine.io.*;
+import pl.mbak.traffic.engine.trace.*;
 
 import java.util.*;
 
@@ -42,6 +43,75 @@ public final class SimulationEngine {
         }
 
         return new SimulationOutput(stepStatuses);
+    }
+
+    public SimulationTrace simulateWithTrace(SimulationInput input) {
+        // TODO: ref related to with DRY -simulate
+        EnumMap<Road, ArrayDeque<Vehicle>> queues = new EnumMap<>(Road.class);
+        for (Road road : Road.values()) {
+            queues.put(road, new ArrayDeque<>());
+        }
+
+        Set<String> knownVehicleIds = new HashSet<>();
+        List<StepStatus> stepStatuses = new ArrayList<>();
+        List<TraceStep> traceSteps = new ArrayList<>();
+
+        for (Command command : input.commands()) {
+            if (command instanceof AddVehicleCommand addVehicleCommand) {
+                validateAddVehicle(addVehicleCommand, knownVehicleIds);
+
+                Turn turn = Turns.compute(addVehicleCommand.startRoad(), addVehicleCommand.endRoad());
+                queues.get(addVehicleCommand.startRoad())
+                        .addLast(new Vehicle(
+                                addVehicleCommand.vehicleId(),
+                                addVehicleCommand.startRoad(),
+                                addVehicleCommand.endRoad(),
+                                turn
+                        ));
+
+                traceSteps.add(new TraceStep(
+                        "addVehicle",
+                        null,
+                        snapshotQueues(queues),
+                        List.of()
+                ));
+            }
+            else if (command instanceof StepCommand) {
+                Phase phase = choosePhase(queues);
+                List<String> leftVehicles = performStep(queues, phase);
+                stepStatuses.add(new StepStatus(leftVehicles));
+
+                traceSteps.add(new TraceStep(
+                        "step",
+                        phase,
+                        snapshotQueues(queues),
+                        List.copyOf(leftVehicles)
+                ));
+            }
+            else {
+                throw new IllegalArgumentException("Unknown command type: " + command.getClass());
+            }
+        }
+
+        return new SimulationTrace(
+                List.copyOf(traceSteps),
+                new SimulationOutput(stepStatuses)
+        );
+    }
+
+    private Map<Road, List<TraceVehicle>> snapshotQueues(EnumMap<Road, ArrayDeque<Vehicle>> queues) {
+        EnumMap<Road, List<TraceVehicle>> snapshot = new EnumMap<>(Road.class);
+
+        for (Road road : Road.values()) {
+            List<TraceVehicle> vehicleIds = queues.get(road)
+                    .stream()
+                    .map(vehicle -> new TraceVehicle(vehicle.vehicleId(), vehicle.turn()))
+                    .toList();
+
+            snapshot.put(road, vehicleIds);
+        }
+
+        return snapshot;
     }
 
     private static List<String> performStep(EnumMap<Road, ArrayDeque<Vehicle>> queues, Phase phase) {
@@ -141,4 +211,6 @@ public final class SimulationEngine {
             throw new IllegalArgumentException("(4) Duplicate 'vehicleId': " + addVehicleCommand.vehicleId());
         }
     }
+
+
 }
