@@ -81,6 +81,15 @@ export class AppComponent implements OnDestroy{
           endRoad: 'south'
         },
         {
+          type: 'addVehicle',
+          vehicleId: 'vehicle5',
+          startRoad: 'east',
+          endRoad: 'south'
+        },
+        {
+          type: 'step'
+        },
+        {
           type: 'step'
         },
         {
