@@ -6,6 +6,7 @@ import pl.mbak.traffic.engine.simulation.SimulationEngine;
 import pl.mbak.traffic.engine.trace.SimulationTrace;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/simulate")
 public class SimulationController {
 
