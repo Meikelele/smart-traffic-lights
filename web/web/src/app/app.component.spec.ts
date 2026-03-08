@@ -9,7 +9,6 @@ describe("AppComponent", () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
 
-  // todo
   let simulationApiServiceSpy: jasmine.SpyObj<SimulationApiService>;
 
   const mockTrace: SimulationTrace = {

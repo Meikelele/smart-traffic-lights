@@ -27,8 +27,6 @@ export class IntersectionSvgComponent {
   get westVehicles(): TraceVehicle[] {
     return this.step?.queues.west ?? [];
   }
-
-  // TODO: maybe enum for phase ???
   isNsActive(): boolean {
     return this.step?.phase === 'NS_THROUGH' || this.step?.phase === 'NS_LEFT';
   }
