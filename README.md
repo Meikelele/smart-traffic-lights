@@ -13,16 +13,19 @@ The system dynamically selects traffic light phases based on current traffic dem
 
 - [Project Goal](#project-goal)
 - [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
 - [Installation](#installation)
+- [Running Web App](#running-web-app)
 - [Input Format](#input-format)
 - [Output Format](#output-format)
 - [Intersection Model](#intersection-model)
 - [Traffic Control Algorithm](#traffic-control-algorithm)
 - [Example Simulation](#example-simulation)
+- [Web Visualization](#web-visualization)
 - [Project Assumptions](#project-assumptions)
 - [Design Decisions](#design-decisions)
 - [Tests](#tests)
-- [Possible Improvements](#possible-improvements)
+- [Continuous Integration](#continuous-integration)
 
 ---
 
@@ -44,17 +47,52 @@ The output of the simulation is a JSON file containing vehicles that left the in
 
 ---
 
+[//]: # (# Tech Stack)
+
+[//]: # (![Java17]&#40;https://img.shields.io/badge/-Java17-ffffff?style=flat-square&logo=openjdk&logoColor=000000&#41;)
+
+[//]: # (![Maven]&#40;https://img.shields.io/badge/-ApacheMaven-C71A36?style=flat-square&logo=apachemaven&logoColor=000000&#41;)
+
+[//]: # (![Jackson]&#40;https://img.shields.io/badge/-JacksonDatabind-FF9900?style=flat-square&#41;)
+
+[//]: # (![JUnit5]&#40;https://img.shields.io/badge/-JUnit5-25A162?style=flat-square&logo=junit5&logoColor=000000&#41;)
+
 # Tech Stack
 
-![Java17](https://img.shields.io/badge/-Java17-ffffff?style=flat-square&logo=openjdk&logoColor=000000)
-![Maven](https://img.shields.io/badge/-ApacheMaven-C71A36?style=flat-square&logo=apachemaven&logoColor=000000)
-![Jackson](https://img.shields.io/badge/-JacksonDatabind-FF9900?style=flat-square)
-![JUnit5](https://img.shields.io/badge/-JUnit5-25A162?style=flat-square&logo=junit5&logoColor=000000)
+### Backend
 
-Project modules:
+![Java17](https://img.shields.io/badge/Java-17-orange?logo=openjdk)
+![SpringBoot](https://img.shields.io/badge/SpringBoot-3.x-green?logo=springboot)
+![Maven](https://img.shields.io/badge/ApacheMaven-C71A36?logo=apachemaven)
+![Jackson](https://img.shields.io/badge/Jackson-JSON-blue)
+
+### Frontend
+
+![Angular](https://img.shields.io/badge/Angular-17-red?logo=angular)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue?logo=typescript)
+![RxJS](https://img.shields.io/badge/RxJS-reactive-purple)
+![SVG](https://img.shields.io/badge/SVG-Visualization-orange)
+
+### Testing
+
+![JUnit5](https://img.shields.io/badge/JUnit5-testing-green?logo=junit5)
+![Jasmine](https://img.shields.io/badge/Jasmine-tests-pink)
+![Karma](https://img.shields.io/badge/Karma-test_runner-yellow)
+
+### CI
+
+![GitHubActions](https://img.shields.io/badge/GitHubActions-CI-blue?logo=githubactions)
+
+
+
+# Architecture
+
+The project is organized into several modules to keep responsibilities clearly separated.
 
 - **engine** – simulation logic and traffic control algorithm
 - **cli** – command line interface for running the simulation
+- **server** – Spring Boot backend exposing the simulation as a REST API
+- **web** – Angular frontend visualizing the intersection and simulation steps
 
 ---
 
@@ -89,6 +127,30 @@ java -jar cli/target/traffic-cli.jar samples/input_sample.json out/output.json
 ```
 
 ---
+
+# Running Web App
+
+To start the web application
+
+### Run a backend
+```
+mvn -pl server spring-boot:run
+```
+
+### Start a frontend
+```
+cd web/web
+npm install
+ng serve
+```
+
+Then open
+```
+http://localhost:4200
+```
+
+**Upload a simulation input JSON file and start the simulation.**
+
 
 # Input Format
 
@@ -337,6 +399,28 @@ Vehicles in queues:
 }
 ```
 
+# Web Visualization
+
+In addition to the CLI simulation, the project includes a **web visualization** built with Angular.
+
+The web interface allows the user to:
+
+- upload an `input.json` simulation file
+- start, stop and reset the simulation
+- visualize vehicles appearing on the intersection
+- highlight the active traffic phase
+- animate vehicles leaving the intersection
+- inspect the simulation trace step by step
+
+The intersection is rendered using **SVG**, which allows precise positioning of vehicles and traffic lanes.
+
+### Example UI
+
+![intersection_web_app_ui.png](docs%2Fintersection_web_app_ui.png)
+
+### Demo
+![SMT_michaelBak_UI_demo.gif](docs%2FSMT_michaelBak_UI_demo.gif)
+
 # Project Assumptions
 
 The simulation uses the following simplified traffic model:
@@ -417,6 +501,27 @@ Reasons:
 - guarantees deterministic simulation results
 - simplifies debugging and testing
 - avoids random phase switching
+
+# Continuous Integration
+
+The project uses **GitHub Actions** to automatically run tests on every push and pull request.
+
+The CI pipeline performs:
+
+1. Backend build and tests (Maven)
+2. Frontend build and tests (Angular + Karma)
+
+Example workflow:
+
+```yaml
+Backend tests
+  mvn -B -ntp test
+
+Frontend tests
+  npm ci
+  npm test -- --watch=false --browsers=ChromeHeadless
+
+```
 
 # Tests
 
@@ -517,14 +622,3 @@ To execute the full test suite run:
 ```
 mvn test
 ```
-
-# Possible Improvements
-
-The current implementation focuses on correctness, determinism, and clarity. To make the system more realistic and feature-rich, the following extensions could be added:
-
-- **Fairness & Starvation Prevention** – Introduce waiting-time based scoring to ensure low-demand directions are not ignored.
-- **Right Turn on Red** – Allow conditional right turns during incompatible phases if there is no conflicting traffic.
-- **Multi-Lane Roads** – Support separate lanes (left, straight, right) to allow multiple vehicles to pass simultaneously.
-- **Pedestrian Crossings** – Model pedestrian phases and request buttons that safely pause conflicting vehicle traffic.
-- **Traffic Statistics** – Collect data on average waiting times, queue lengths, and throughput to analyze algorithm efficiency.
-- **Visualization (Web UI)** – Build a graphical interface for real-time intersection monitoring and interactive command input.

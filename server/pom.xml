@@ -13,6 +13,7 @@
 
     <artifactId>server</artifactId>
 
+
     <dependencies>
 
         <dependency>
@@ -27,5 +28,18 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.3.2</version>
+                <configuration>
+                    <mainClass>pl.mbak.traffic.server.TrafficServerApplication</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
