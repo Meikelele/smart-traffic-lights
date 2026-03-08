@@ -418,6 +418,9 @@ The intersection is rendered using **SVG**, which allows precise positioning of 
 
 ![intersection_web_app_ui.png](docs%2Fintersection_web_app_ui.png)
 
+### Demo
+![SMT_michaelBak_UI_demo.gif](docs%2FSMT_michaelBak_UI_demo.gif)
+
 # Project Assumptions
 
 The simulation uses the following simplified traffic model:
